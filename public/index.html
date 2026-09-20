@@ -1,1013 +1,703 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
-
-    <meta
-        name="theme-color"
-        content="#08090d"
-    >
-
-    <title>TXG Security</title>
-
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            background: #08090d;
-            color: #ffffff;
-            font-family:
-                Inter,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                sans-serif;
-        }
-
-        body {
-            min-height: 100vh;
-            min-height: 100dvh;
-            overflow: hidden;
-        }
-
-        .page {
-            min-height: 100vh;
-            min-height: 100dvh;
-
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-
-            padding:
-                24px
-                24px
-                calc(70px + env(safe-area-inset-bottom));
-
-            position: relative;
-
-            background:
-                radial-gradient(
-                    circle at 50% 35%,
-                    rgba(75, 100, 255, 0.12),
-                    transparent 32%
-                ),
-                #08090d;
-        }
-
-        /*
-        --------------------------------------------
-        BRAND
-        --------------------------------------------
-        */
-
-        .brand {
-            position: absolute;
-            top: calc(22px + env(safe-area-inset-top));
-            left: 0;
-            right: 0;
-
-            text-align: center;
-
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 3px;
-
-            color: rgba(255,255,255,0.48);
-        }
-
-        /*
-        --------------------------------------------
-        MAIN CARD
-        --------------------------------------------
-        */
-
-        .card {
-            width: min(100%, 390px);
-
-            padding: 34px 24px 30px;
-
-            border-radius: 28px;
-
-            background:
-                linear-gradient(
-                    180deg,
-                    rgba(255,255,255,0.055),
-                    rgba(255,255,255,0.018)
-                );
-
-            border: 1px solid rgba(255,255,255,0.07);
-
-            box-shadow:
-                0 25px 80px rgba(0,0,0,0.42),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-
-            text-align: center;
-
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        /*
-        --------------------------------------------
-        LOADER
-        --------------------------------------------
-        */
-
-        .loader {
-            width: 108px;
-            height: 108px;
-
-            margin: 0 auto 28px;
-
-            position: relative;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .loader-ring {
-            position: absolute;
-
-            width: 100%;
-            height: 100%;
-
-            border-radius: 50%;
-
-            border: 2px solid rgba(255,255,255,0.08);
-
-            border-top-color: rgba(255,255,255,0.92);
-            border-right-color: rgba(110,140,255,0.65);
-
-            animation: spin 1.15s linear infinite;
-        }
-
-        .loader-ring::after {
-            content: "";
-
-            position: absolute;
-
-            inset: 9px;
-
-            border-radius: 50%;
-
-            border: 1px solid rgba(255,255,255,0.07);
-
-            animation: reverseSpin 1.8s linear infinite;
-        }
-
-        .loader-core {
-            width: 58px;
-            height: 58px;
-
-            border-radius: 20px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,0.13),
-                    rgba(255,255,255,0.035)
-                );
-
-            border: 1px solid rgba(255,255,255,0.08);
-
-            box-shadow:
-                0 10px 35px rgba(0,0,0,0.35);
-
-            animation: pulse 1.7s ease-in-out infinite;
-        }
-
-        .loader-dot {
-            width: 12px;
-            height: 12px;
-
-            border-radius: 50%;
-
-            background: #ffffff;
-
-            box-shadow:
-                0 0 18px rgba(255,255,255,0.75);
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes reverseSpin {
-            to {
-                transform: rotate(-360deg);
-            }
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(0.94);
-                opacity: 0.72;
-            }
-
-            50% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        /*
-        --------------------------------------------
-        TEXT
-        --------------------------------------------
-        */
-
-        .title {
-            margin: 0;
-
-            font-size: 24px;
-            line-height: 1.2;
-
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-
-        .subtitle {
-            margin: 11px 0 0;
-
-            font-size: 14px;
-            line-height: 1.6;
-
-            color: rgba(255,255,255,0.50);
-        }
-
-        /*
-        --------------------------------------------
-        RESULT
-        --------------------------------------------
-        */
-
-        .result {
-            display: none;
-        }
-
-        .result-icon {
-            width: 82px;
-            height: 82px;
-
-            margin: 0 auto 22px;
-
-            border-radius: 50%;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 34px;
-            font-weight: 800;
-
-            background:
-                rgba(255,255,255,0.07);
-
-            border: 1px solid rgba(255,255,255,0.11);
-
-            box-shadow:
-                0 15px 45px rgba(0,0,0,0.3);
-
-            animation: resultIn 0.45s ease forwards;
-        }
-
-        @keyframes resultIn {
-            from {
-                opacity: 0;
-                transform: scale(0.75);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .result-title {
-            margin: 0;
-
-            font-size: 25px;
-            font-weight: 850;
-            letter-spacing: -0.5px;
-        }
-
-        .result-subtitle {
-            margin: 10px 0 0;
-
-            font-size: 14px;
-            line-height: 1.6;
-
-            color: rgba(255,255,255,0.52);
-        }
-
-        /*
-        --------------------------------------------
-        BUTTON
-        --------------------------------------------
-        */
-
-        .continue-btn,
-        .retry-btn {
-            width: 100%;
-
-            margin-top: 26px;
-
-            min-height: 52px;
-
-            border: 0;
-            border-radius: 16px;
-
-            color: #ffffff;
-
-            font-size: 15px;
-            font-weight: 750;
-
-            cursor: pointer;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(255,255,255,0.15),
-                    rgba(255,255,255,0.065)
-                );
-
-            border: 1px solid rgba(255,255,255,0.10);
-
-            box-shadow:
-                0 12px 35px rgba(0,0,0,0.25);
-
-            transition:
-                transform 0.18s ease,
-                background 0.18s ease;
-        }
-
-        .continue-btn:active,
-        .retry-btn:active {
-            transform: scale(0.97);
-        }
-
-        /*
-        --------------------------------------------
-        ERROR
-        --------------------------------------------
-        */
-
-        .error {
-            display: none;
-        }
-
-        /*
-        --------------------------------------------
-        FOOTER
-        --------------------------------------------
-        */
-
-        .footer {
-            position: fixed;
-
-            left: 0;
-            right: 0;
-
-            bottom:
-                calc(16px + env(safe-area-inset-bottom));
-
-            text-align: center;
-
-            z-index: 20;
-        }
-
-        .txg-link {
-            display: inline-block;
-
-            color: rgba(255,255,255,0.52);
-
-            text-decoration: none;
-
-            font-size: 13px;
-            font-weight: 800;
-
-            letter-spacing: 2px;
-
-            padding: 8px 12px;
-
-            border-radius: 12px;
-
-            transition:
-                color 0.2s ease,
-                background 0.2s ease;
-        }
-
-        .txg-link:active {
-            background: rgba(255,255,255,0.06);
-            color: #ffffff;
-        }
-
-        /*
-        --------------------------------------------
-        ACCESSIBILITY
-        --------------------------------------------
-        */
-
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <meta
+    name="theme-color"
+    content="#07070a"
+  >
+
+  <meta
+    name="robots"
+    content="noindex,nofollow,noarchive"
+  >
+
+  <title>TXG Verification</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #07070a;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      color: #ffffff;
+    }
+
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+    }
+
+    .glow {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.045);
+      filter: blur(70px);
+      pointer-events: none;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      max-width: 390px;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 25px;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          145deg,
+          #19191f,
+          #0c0c10
+        );
+
+      border: 1px solid rgba(255,255,255,0.10);
+
+      box-shadow:
+        0 18px 50px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .logo span {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .title {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      margin-bottom: 9px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: rgba(255,255,255,0.52);
+      line-height: 1.55;
+      margin-bottom: 32px;
+    }
+
+    .loaderBox {
+      width: 100%;
+      padding: 22px 20px;
+      border-radius: 20px;
+
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.075);
+
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.25),
+        inset 0 1px 0 rgba(255,255,255,0.035);
+    }
+
+    .loader {
+      width: 100%;
+      height: 5px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .loader::before {
+      content: "";
+      display: block;
+      width: 35%;
+      height: 100%;
+      border-radius: inherit;
+
+      background: #ffffff;
+
+      animation:
+        loading 1.15s
+        ease-in-out
+        infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        transform: translateX(-130%);
+      }
+
+      50% {
+        transform: translateX(150%);
+      }
+
+      100% {
+        transform: translateX(300%);
+      }
+    }
+
+    .loadingText {
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.58);
+    }
+
+    .result {
+      display: none;
+      width: 100%;
+    }
+
+    .resultIcon {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 29px;
+      font-weight: 800;
+
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.11);
+
+      box-shadow:
+        0 15px 45px rgba(0,0,0,0.35);
+    }
+
+    .resultTitle {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .resultText {
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.52);
+      margin-bottom: 26px;
+    }
+
+    .continueBtn {
+      width: 100%;
+      height: 54px;
+      border: 0;
+      border-radius: 16px;
+
+      color: #080808;
+      background: #ffffff;
+
+      font-size: 15px;
+      font-weight: 750;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 12px 35px rgba(255,255,255,0.10);
+
+      transition:
+        transform .15s ease,
+        opacity .15s ease;
+    }
+
+    .continueBtn:active {
+      transform: scale(.97);
+      opacity: .82;
+    }
+
+    .error .resultIcon {
+      font-size: 25px;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: max(18px, env(safe-area-inset-bottom));
+
+      text-align: center;
+      z-index: 5;
+    }
+
+    .footer a {
+      color: rgba(255,255,255,0.35);
+      text-decoration: none;
+
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+
+      transition: color .2s ease;
+    }
+
+    .footer a:active {
+      color: #ffffff;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="page">
+  <main class="app">
 
-    <div class="brand">
-        TXG SECURITY
-    </div>
+    <div class="glow"></div>
 
-    <div class="card">
+    <section class="card">
 
-        <!-- LOADING -->
+      <!-- LOADING -->
+      <div id="loading">
 
-        <div id="loading">
+        <div class="logo">
+          <span>#TXG</span>
+        </div>
 
-            <div class="loader">
-                <div class="loader-ring"></div>
+        <div class="title">
+          Verifying Device
+        </div>
 
-                <div class="loader-core">
-                    <div class="loader-dot"></div>
-                </div>
-            </div>
+        <div class="subtitle">
+          Please wait while we securely verify your device.
+        </div>
 
-            <h1 class="title">
-                Verifying Device
-            </h1>
+        <div class="loaderBox">
 
-            <p class="subtitle">
-                Please wait while verification is completed.
-            </p>
+          <div class="loader"></div>
+
+          <div class="loadingText">
+            Securing your session...
+          </div>
 
         </div>
 
+      </div>
 
-        <!-- RESULT -->
 
-        <div id="result" class="result">
+      <!-- RESULT -->
+      <div id="result" class="result">
 
-            <div id="resultIcon" class="result-icon">
-                ✓
-            </div>
-
-            <h1 id="resultTitle" class="result-title">
-                VERIFIED
-            </h1>
-
-            <p id="resultSubtitle" class="result-subtitle">
-                Device verification is complete.
-            </p>
-
-            <button
-                id="continueButton"
-                class="continue-btn"
-                type="button"
-            >
-                Continue
-            </button>
-
+        <div
+          id="resultIcon"
+          class="resultIcon"
+        >
+          ✓
         </div>
 
-
-        <!-- ERROR -->
-
-        <div id="error" class="error">
-
-            <div class="result-icon">
-                !
-            </div>
-
-            <h1 class="result-title">
-                Verification Failed
-            </h1>
-
-            <p id="errorText" class="result-subtitle">
-                Please try again.
-            </p>
-
-            <button
-                id="retryButton"
-                class="retry-btn"
-                type="button"
-            >
-                Retry
-            </button>
-
+        <div
+          id="resultTitle"
+          class="resultTitle"
+        >
+          VERIFIED
         </div>
 
-    </div>
+        <div
+          id="resultText"
+          class="resultText"
+        >
+          Your device has been verified successfully.
+        </div>
+
+        <button
+          id="continueBtn"
+          class="continueBtn"
+        >
+          Continue to Bot
+        </button>
+
+      </div>
+
+    </section>
 
 
-    <!-- ALWAYS AT THE BOTTOM -->
-
+    <!-- ALWAYS AT BOTTOM -->
     <div class="footer">
 
-        <a
-            class="txg-link"
-            href="https://t.me/TXG_MAKER_bot"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            #TXG
-        </a>
+      <a
+        href="https://t.me/TXG_MAKER_bot"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        #TXG
+      </a>
 
     </div>
 
-</div>
+  </main>
 
 
-<script>
-(function () {
+  <script>
+    (() => {
 
-    "use strict";
-
-
-    /*
-    ----------------------------------------------------
-    TELEGRAM
-    ----------------------------------------------------
-    */
-
-    const tg =
+      const tg =
         window.Telegram &&
         window.Telegram.WebApp
-            ? window.Telegram.WebApp
-            : null;
+          ? window.Telegram.WebApp
+          : null;
 
-    if (tg) {
+
+      /*
+       * Telegram Mini App setup
+       */
+      if (tg) {
         try {
-            tg.ready();
-            tg.expand();
+          tg.ready();
+          tg.expand();
         } catch (e) {}
-    }
+      }
 
 
-    /*
-    ----------------------------------------------------
-    ELEMENTS
-    ----------------------------------------------------
-    */
+      /*
+       * Read bot_id automatically
+       *
+       * Example:
+       * ?bot_id=123456789
+       */
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
 
-    const loading =
-        document.getElementById("loading");
-
-    const result =
-        document.getElementById("result");
-
-    const errorBox =
-        document.getElementById("error");
-
-    const resultIcon =
-        document.getElementById("resultIcon");
-
-    const resultTitle =
-        document.getElementById("resultTitle");
-
-    const resultSubtitle =
-        document.getElementById("resultSubtitle");
-
-    const errorText =
-        document.getElementById("errorText");
-
-    const continueButton =
-        document.getElementById("continueButton");
-
-    const retryButton =
-        document.getElementById("retryButton");
+      const botId =
+        params.get("bot_id");
 
 
-    /*
-    ----------------------------------------------------
-    DEVICE ID
-    ----------------------------------------------------
-    */
-
-    function getDeviceId() {
-
-        const storageKey =
-            "txg_device_id";
-
-        try {
-
-            let existing =
-                localStorage.getItem(storageKey);
-
-            if (
-                existing &&
-                /^[A-Za-z0-9._~-]{32,256}$/.test(existing)
-            ) {
-                return existing;
-            }
-
-
-            /*
-            Generate 32 cryptographically
-            random bytes.
-            */
-
-            const bytes =
-                new Uint8Array(32);
-
-            crypto.getRandomValues(bytes);
-
-            let value = "";
-
-            for (let i = 0; i < bytes.length; i++) {
-
-                value +=
-                    bytes[i]
-                        .toString(16)
-                        .padStart(2, "0");
-            }
-
-
-            localStorage.setItem(
-                storageKey,
-                value
-            );
-
-            return value;
-
-        } catch (e) {
-
-            /*
-            If localStorage is unavailable,
-            create a temporary random identifier.
-
-            This will not survive a browser restart.
-            */
-
-            const bytes =
-                new Uint8Array(32);
-
-            crypto.getRandomValues(bytes);
-
-            let value = "";
-
-            for (let i = 0; i < bytes.length; i++) {
-
-                value +=
-                    bytes[i]
-                        .toString(16)
-                        .padStart(2, "0");
-            }
-
-            return value;
-        }
-    }
-
-
-    /*
-    ----------------------------------------------------
-    BOT ID
-    ----------------------------------------------------
-    */
-
-    function getBotId() {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-        const fromUrl =
-            params.get("bot_id");
+      /*
+       * Generate a random browser device ID.
+       *
+       * This identifies the browser profile,
+       * not physical hardware.
+       */
+      function createDeviceId() {
 
         if (
-            fromUrl &&
-            /^[0-9]{1,30}$/.test(fromUrl)
+          window.crypto &&
+          crypto.getRandomValues
         ) {
-            return fromUrl;
+
+          const bytes =
+            new Uint8Array(32);
+
+          crypto.getRandomValues(bytes);
+
+          return Array
+            .from(bytes)
+            .map(
+              b =>
+                b
+                  .toString(16)
+                  .padStart(2, "0")
+            )
+            .join("");
+
+        }
+
+        return (
+          Date.now().toString(16) +
+          Math.random()
+            .toString(16)
+            .slice(2)
+        ).padEnd(64, "0").slice(0, 64);
+      }
+
+
+      let deviceId =
+        localStorage.getItem(
+          "txg_device_id"
+        );
+
+
+      if (
+        !deviceId ||
+        !/^[a-f0-9]{64}$/i.test(deviceId)
+      ) {
+
+        deviceId =
+          createDeviceId();
+
+        try {
+          localStorage.setItem(
+            "txg_device_id",
+            deviceId
+          );
+        } catch (e) {}
+
+      }
+
+
+      const loading =
+        document.getElementById(
+          "loading"
+        );
+
+      const result =
+        document.getElementById(
+          "result"
+        );
+
+      const resultIcon =
+        document.getElementById(
+          "resultIcon"
+        );
+
+      const resultTitle =
+        document.getElementById(
+          "resultTitle"
+        );
+
+      const resultText =
+        document.getElementById(
+          "resultText"
+        );
+
+      const continueBtn =
+        document.getElementById(
+          "continueBtn"
+        );
+
+
+      function showResult(
+        title,
+        text,
+        icon,
+        isError
+      ) {
+
+        loading.classList.add(
+          "hidden"
+        );
+
+        result.classList.remove(
+          "hidden"
+        );
+
+        result.style.display =
+          "block";
+
+        resultTitle.textContent =
+          title;
+
+        resultText.textContent =
+          text;
+
+        resultIcon.textContent =
+          icon;
+
+        if (isError) {
+          result.classList.add(
+            "error"
+          );
+        }
+
+      }
+
+
+      async function verify() {
+
+        /*
+         * Bot ID is mandatory.
+         * User never enters it manually.
+         */
+        if (!botId) {
+
+          showResult(
+            "INVALID LINK",
+            "This verification link is missing the bot information.",
+            "!",
+            true
+          );
+
+          return;
         }
 
 
         /*
-        Telegram start parameter fallback.
-        */
+         * Telegram initData.
+         *
+         * It is validated ONLY on the server.
+         */
+        let initData = "";
 
         if (tg) {
-
-            try {
-
-                const startParam =
-                    tg.initDataUnsafe &&
-                    tg.initDataUnsafe.start_param;
-
-                if (
-                    startParam &&
-                    /^[0-9]{1,30}$/.test(startParam)
-                ) {
-                    return startParam;
-                }
-
-            } catch (e) {}
+          initData =
+            tg.initData || "";
         }
 
-        return null;
-    }
+
+        try {
+
+          const response =
+            await fetch(
+              "/api/verify",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  botId:
+                    botId,
+
+                  deviceId:
+                    deviceId,
+
+                  initData:
+                    initData
+                })
+              }
+            );
 
 
-    /*
-    ----------------------------------------------------
-    SHOW RESULT
-    ----------------------------------------------------
-    */
-
-    function showResult(data) {
-
-        loading.style.display = "none";
-        errorBox.style.display = "none";
-
-        result.style.display = "block";
-
-        if (data.status === "same_device") {
-
-            resultIcon.textContent = "✓";
-
-            resultTitle.textContent =
-                "SAME DEVICE";
-
-            resultSubtitle.textContent =
-                "This device is already verified.";
-
-        } else {
-
-            resultIcon.textContent = "✓";
-
-            resultTitle.textContent =
-                "VERIFIED";
-
-            resultSubtitle.textContent =
-                "Device verification is complete.";
-        }
-    }
+          const data =
+            await response.json();
 
 
-    /*
-    ----------------------------------------------------
-    SHOW ERROR
-    ----------------------------------------------------
-    */
+          if (
+            !response.ok ||
+            !data.ok
+          ) {
 
-    function showError(message) {
-
-        loading.style.display = "none";
-        result.style.display = "none";
-
-        errorBox.style.display = "block";
-
-        errorText.textContent =
-            message ||
-            "Verification could not be completed.";
-    }
-
-
-    /*
-    ----------------------------------------------------
-    VERIFY
-    ----------------------------------------------------
-    */
-
-    async function verify() {
-
-        loading.style.display = "block";
-        result.style.display = "none";
-        errorBox.style.display = "none";
-
-
-        const botId =
-            getBotId();
-
-        if (!botId) {
-
-            showError(
-                "Invalid verification link."
+            showResult(
+              "VERIFICATION FAILED",
+              "We could not verify this session. Please open the verification link again from the bot.",
+              "!",
+              true
             );
 
             return;
-        }
+          }
 
 
-        /*
-        Telegram mode if Telegram
-        provides initData.
-        Otherwise normal website mode.
-        */
+          if (
+            data.status ===
+            "same_device"
+          ) {
 
-        let mode = "website";
-
-        let initData = "";
-
-
-        if (
-            tg &&
-            typeof tg.initData === "string" &&
-            tg.initData.length > 0
-        ) {
-
-            mode = "telegram";
-
-            initData =
-                tg.initData;
-        }
-
-
-        const deviceId =
-            getDeviceId();
-
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/verify",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        cache: "no-store",
-
-                        body: JSON.stringify({
-                            mode: mode,
-                            botId: botId,
-                            deviceId: deviceId,
-                            initData: initData
-                        })
-                    }
-                );
-
-
-            let data;
-
-            try {
-                data =
-                    await response.json();
-            } catch (e) {
-                data = null;
-            }
-
-
-            if (
-                !response.ok ||
-                !data ||
-                data.success !== true
-            ) {
-
-                showError(
-                    "Verification could not be completed."
-                );
-
-                return;
-            }
-
-
-            showResult(data);
-
-
-            /*
-            Save continue URL only
-            for fallback navigation.
-            */
-
-            if (
-                data.continue_url &&
-                typeof data.continue_url === "string"
-            ) {
-
-                continueButton.dataset.url =
-                    data.continue_url;
-            }
-
-
-        } catch (e) {
-
-            showError(
-                "Connection failed. Please try again."
+            showResult(
+              "SAME DEVICE",
+              "This device has already been verified.",
+              "✓",
+              false
             );
-        }
-    }
+
+          } else {
+
+            showResult(
+              "VERIFIED",
+              "Your device has been verified successfully.",
+              "✓",
+              false
+            );
+
+          }
 
 
-    /*
-    ----------------------------------------------------
-    CONTINUE
-    ----------------------------------------------------
-    */
+          /*
+           * Continue button
+           */
+          continueBtn.onclick =
+            () => {
 
-    continueButton.addEventListener(
-        "click",
-        function () {
-
-            /*
-            Telegram Mini App:
-            close the Mini App.
-            */
-
-            if (
+              /*
+               * Telegram Mini App
+               */
+              if (
                 tg &&
-                typeof tg.close === "function"
-            ) {
+                typeof tg.close ===
+                  "function"
+              ) {
 
                 try {
-                    tg.close();
-                    return;
+                  tg.close();
+                  return;
                 } catch (e) {}
-            }
+
+              }
 
 
-            /*
-            Normal website fallback.
-            */
+              /*
+               * Normal browser
+               */
+              if (
+                data.continue_url
+              ) {
 
-            const url =
-                continueButton.dataset.url;
+                window.location.href =
+                  data.continue_url;
 
-            if (
-                url &&
-                /^https:\/\/t\.me\//i.test(url)
-            ) {
+              }
 
-                window.location.href = url;
+            };
 
-            } else {
+        } catch (error) {
 
-                /*
-                If no Telegram URL is configured,
-                simply keep the verified screen.
-                */
+          showResult(
+            "CONNECTION ERROR",
+            "Unable to connect to the verification server. Please try again.",
+            "!",
+            true
+          );
 
-                continueButton.textContent =
-                    "Verified";
-            }
         }
-    );
+
+      }
 
 
-    /*
-    ----------------------------------------------------
-    RETRY
-    ----------------------------------------------------
-    */
+      /*
+       * Small premium loading delay
+       * so the loading screen is visible.
+       */
+      setTimeout(
+        verify,
+        900
+      );
 
-    retryButton.addEventListener(
-        "click",
-        function () {
-
-            verify();
-        }
-    );
-
-
-    /*
-    ----------------------------------------------------
-    START AUTOMATICALLY
-    ----------------------------------------------------
-    */
-
-    verify();
-
-})();
-</script>
+    })();
+  </script>
 
 </body>
 </html>
 
-Ab screen par koi internal verification stage nahi dikhega — sirf premium loader chalega aur backend ka final result aayega.
+Ab frontend me Bot ID automatically URL se aayega, aur user ko kuch type nahi karna hai.
+
+Next required: Vercel Environment Variables + "BOT_CONFIG" ka exact setup. Uske bina backend token/database se connect nahi karega.
